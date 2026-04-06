@@ -1,0 +1,69 @@
+import React from 'react';
+import { IMAGES } from '@/data/constants';
+import { Award, Users, Globe, TrendingUp } from 'lucide-react';
+
+const features = [
+  { icon: Award, title: 'Excellence', desc: 'Committed to the highest standards in every service we deliver.' },
+  { icon: Users, title: 'Client-Centric', desc: 'Your success is our priority. We build lasting partnerships.' },
+  { icon: Globe, title: 'Pan-African', desc: 'Serving clients across the African continent and beyond.' },
+  { icon: TrendingUp, title: 'Growth', desc: 'Driving sustainable growth through innovation and integrity.' },
+];
+
+const AboutSection: React.FC = () => {
+  return (
+    <section id="about" className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left - Image */}
+          <div className="relative">
+            <div className="rounded-2xl overflow-hidden shadow-2xl">
+              <img src={IMAGES.team[0]} alt="Ngonji's Leadership" className="w-full h-96 object-cover" />
+            </div>
+            {/* Floating card */}
+            <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-5 border border-gray-100 hidden md:block">
+              <div className="text-3xl font-bold text-blue-700">25+</div>
+              <div className="text-sm text-gray-600">Years of Excellence</div>
+            </div>
+          </div>
+
+          {/* Right - Content */}
+          <div>
+            <span className="inline-block px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4">
+              About Us
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+              A Legacy of Trust &<br />
+              <span className="text-blue-700">African Excellence</span>
+            </h2>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              Founded by Maître Jean Ngonji, our holding firm represents a vision of integrated 
+              excellence across legal, real estate, philanthropic, and financial services. For over 
+              two decades, we have been at the forefront of Africa's business landscape, delivering 
+              premium solutions that transform lives and communities.
+            </p>
+            <p className="text-gray-600 leading-relaxed mb-8">
+              Our four distinct entities operate with autonomy while leveraging the collective 
+              strength, reputation, and resources of the Ngonji's Holding Firm ecosystem.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              {features.map((f, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-blue-50 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <f.icon className="w-5 h-5 text-blue-700" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 text-sm">{f.title}</h4>
+                    <p className="text-xs text-gray-500 mt-0.5">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AboutSection;
