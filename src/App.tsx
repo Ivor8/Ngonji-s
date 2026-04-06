@@ -12,7 +12,7 @@ import AboutPage from "./pages/AboutPage";
 import TeamPage from "./pages/TeamPage";
 import ContactPage from "./pages/ContactPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,11 +34,11 @@ const App = () => (
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />
-                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-                <Route path="/admin/services" element={<AdminDashboardPage />} />
-                <Route path="/admin/portfolio" element={<AdminDashboardPage />} />
-                <Route path="/admin/contacts" element={<AdminDashboardPage />} />
-                <Route path="/admin/bookings" element={<AdminDashboardPage />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/services" element={<AdminDashboard />} />
+                <Route path="/admin/portfolio" element={<AdminDashboard />} />
+                <Route path="/admin/contacts" element={<AdminDashboard />} />
+                <Route path="/admin/bookings" element={<AdminDashboard />} />
                 
                 <Route path="*" element={<NotFound />} />
               </Routes>

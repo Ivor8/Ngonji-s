@@ -3,6 +3,7 @@ import { Shield, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/lib/supabase';
 
 const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,15 +22,31 @@ const AdminLoginPage: React.FC = () => {
     setError('');
 
     try {
-      // Simple admin login - you can replace with real authentication
-      if (email === 'admin@ngonji.com' && password === 'admin123') {
-        loginAdmin(email);
-        navigate('/admin/dashboard');
-      } else {
-        setError('Invalid credentials');
+      // Use Supabase auth to sign in
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message || 'Invalid credentials');
+      } else if (data.user) {
+        // Check if user has admin role (optional - you can skip this if all users are admins)
+        const { data: profile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profile?.role === 'admin' || !profile) {
+          loginAdmin(email);
+          navigate('/admin/dashboard');
+        } else {
+          setError('Access denied. Admin privileges required.');
+        }
       }
     } catch (err) {
-      setError('Login failed');
+      setError('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
