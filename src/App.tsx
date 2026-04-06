@@ -11,6 +11,8 @@ import Index from "./pages/Index";
 import AboutPage from "./pages/AboutPage";
 import TeamPage from "./pages/TeamPage";
 import ContactPage from "./pages/ContactPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,15 @@ const App = () => (
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/team" element={<TeamPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                <Route path="/admin/services" element={<AdminDashboardPage />} />
+                <Route path="/admin/portfolio" element={<AdminDashboardPage />} />
+                <Route path="/admin/contacts" element={<AdminDashboardPage />} />
+                <Route path="/admin/bookings" element={<AdminDashboardPage />} />
+                
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

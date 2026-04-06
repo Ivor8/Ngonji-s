@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import { ENTITIES, ENTITY_LIST, EntityKey } from '@/data/constants';
 import { Menu, X, ChevronDown, Shield, Globe } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -8,6 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
 const Navbar: React.FC = () => {
   const { view, activeEntity, entityTab, goHome, openEntity, setEntityTab, openAdminLogin, isAdminLoggedIn, goToAdmin } = useApp();
   const { language, setLanguage, t } = useLanguage();
+  const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,9 +36,7 @@ const Navbar: React.FC = () => {
   const entityConfig = activeEntity ? ENTITIES[activeEntity] : null;
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-      scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100' : 'bg-transparent'
-    }`}>
+    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
@@ -45,10 +45,10 @@ const Navbar: React.FC = () => {
               <img src="/assets/ngonjis holding  logo.jpeg" alt="Ngonji's Holding" className="w-full h-full object-cover" />
             </div>
             <div className="hidden sm:block">
-              <h1 className={`font-bold text-lg leading-tight transition-colors ${scrolled ? 'text-gray-900' : 'text-white'}`}>
+              <h1 className={`font-bold text-lg leading-tight transition-colors ${scrolled ? 'text-gray-900' : 'text-gray-800'}`}>
                 Ngonji's Holding
               </h1>
-              <p className={`text-xs leading-tight transition-colors ${scrolled ? 'text-gray-500' : 'text-blue-200'}`}>
+              <p className={`text-xs leading-tight transition-colors ${scrolled ? 'text-gray-500' : 'text-gray-600'}`}>
                 Firm
               </p>
             </div>
@@ -59,14 +59,14 @@ const Navbar: React.FC = () => {
             {view === 'entity' && entityConfig ? (
               // Entity sub-navigation
               <>
-                <button onClick={goHome} className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${scrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'}`}>
+                <button onClick={goHome} className="px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-700 hover:text-gray-900 hover:bg-gray-100">
                   {t('nav.allServices')}
                 </button>
-                <span className={`mx-1 ${scrolled ? 'text-gray-300' : 'text-white/30'}`}>/</span>
-                <span className={`px-2 py-1 rounded text-xs font-semibold`} style={{ backgroundColor: entityConfig.colorLight, color: entityConfig.colorDark }}>
+                <span className="mx-1 text-gray-400">/</span>
+                <span className="px-2 py-1 rounded text-xs font-semibold" style={{ backgroundColor: entityConfig.colorLight, color: entityConfig.colorDark }}>
                   {entityConfig.name}
                 </span>
-                <span className={`mx-1 ${scrolled ? 'text-gray-300' : 'text-white/30'}`}>/</span>
+                <span className="mx-1 text-gray-400">/</span>
                 {entityTabs.map(tab => (
                   <button
                     key={tab}
@@ -74,7 +74,7 @@ const Navbar: React.FC = () => {
                     className={`px-3 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
                       entityTab === tab
                         ? 'text-white shadow-md'
-                        : scrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/80 hover:text-white hover:bg-white/10'
+                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                     style={entityTab === tab ? { backgroundColor: entityConfig.color } : {}}
                   >
@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className={`flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${scrolled ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' : 'text-white/90 hover:text-white hover:bg-white/10'}`}
+                    className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                   >
                     {t('nav.services')} <ChevronDown className="w-4 h-4" />
                   </button>
@@ -119,12 +119,8 @@ const Navbar: React.FC = () => {
                     to={`/${item.toLowerCase()}`}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                       location.pathname === `/${item.toLowerCase()}`
-                        ? scrolled 
-                          ? 'bg-blue-100 text-blue-700' 
-                          : 'bg-white/20 text-white'
-                        : scrolled 
-                          ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' 
-                          : 'text-white/90 hover:text-white hover:bg-white/10'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                   >
                     {t(`nav.${item.toLowerCase()}`)}
@@ -139,21 +135,15 @@ const Navbar: React.FC = () => {
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-              className={`hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                scrolled 
-                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' 
-                  : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
-              }`}
+              className="hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-700 hover:text-gray-900 hover:bg-gray-100"
             >
               <Globe className="w-4 h-4" />
               {language === 'en' ? 'FR' : 'EN'}
             </button>
             
             <button
-              onClick={isAdminLoggedIn ? goToAdmin : openAdminLogin}
-              className={`hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                scrolled ? 'bg-blue-900 text-white hover:bg-blue-800' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
-              }`}
+              onClick={() => isAdminLoggedIn ? navigate('/admin/dashboard') : navigate('/admin/login')}
+              className="hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all text-gray-700 hover:text-gray-900 hover:bg-gray-100"
             >
               <Shield className="w-4 h-4" />
               {isAdminLoggedIn ? t('nav.dashboard') : t('nav.admin')}
@@ -162,7 +152,7 @@ const Navbar: React.FC = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className={`lg:hidden p-2 rounded-lg transition-colors ${scrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+              className="lg:hidden p-2 rounded-lg transition-colors text-gray-700 hover:bg-gray-100"
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -235,8 +225,8 @@ const Navbar: React.FC = () => {
               {language === 'en' ? 'FR' : 'EN'}
             </button>
             <button
-              onClick={() => { isAdminLoggedIn ? goToAdmin() : openAdminLogin(); setMobileOpen(false); }}
-              className="w-full flex items-center gap-2 px-4 py-3 rounded-lg bg-blue-900 text-white font-medium"
+              onClick={() => { isAdminLoggedIn ? navigate('/admin/dashboard') : navigate('/admin/login'); setMobileOpen(false); }}
+              className="w-full flex items-center gap-2 px-4 py-3 rounded-lg bg-gray-100 text-gray-700 font-medium"
             >
               <Shield className="w-4 h-4" />
               {isAdminLoggedIn ? 'Dashboard' : 'Admin Login'}
