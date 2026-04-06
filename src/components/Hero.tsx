@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { IMAGES, STATS } from '@/data/constants';
 import { ArrowRight, Play } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const { openEntity } = useApp();
+  const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -46,16 +48,15 @@ const Hero: React.FC = () => {
 
           {/* Heading */}
           <h1 className={`text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            Building Africa's
+            {t('hero.title')}
             <span className="block bg-gradient-to-r from-blue-300 via-cyan-300 to-teal-300 bg-clip-text text-transparent">
-              Future Together
+              {t('hero.subtitle')}
             </span>
           </h1>
 
           {/* Description */}
           <p className={`text-lg sm:text-xl text-blue-100/90 max-w-2xl mb-10 leading-relaxed transition-all duration-700 delay-300 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-            A premier holding firm uniting legal excellence, real estate innovation, 
-            community empowerment, and financial solutions under one visionary umbrella.
+            {t('hero.description')}
           </p>
 
           {/* CTA Buttons */}
@@ -67,7 +68,7 @@ const Hero: React.FC = () => {
               }}
               className="group flex items-center gap-2 px-8 py-4 bg-white text-blue-900 rounded-xl font-semibold text-lg hover:bg-blue-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
             >
-              Explore Our Services
+              {t('hero.cta')}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button

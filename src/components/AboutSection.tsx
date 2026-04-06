@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { IMAGES } from '@/data/constants';
 import { Award, Users, Globe, TrendingUp } from 'lucide-react';
 
@@ -10,6 +11,8 @@ const features = [
 ];
 
 const AboutSection: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <section id="about" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +20,7 @@ const AboutSection: React.FC = () => {
           {/* Left - Image */}
           <div className="relative">
             <div className="rounded-2xl overflow-hidden shadow-2xl">
-              <img src={IMAGES.team[0]} alt="Ngonji's Leadership" className="w-full h-96 object-cover" />
+              <img src="/assets/ngonji in lawyer picture.jpeg" alt="Ngonji's Leadership" className="w-full h-96 object-cover" />
             </div>
             {/* Floating card */}
             <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-5 border border-gray-100 hidden md:block">
@@ -29,21 +32,16 @@ const AboutSection: React.FC = () => {
           {/* Right - Content */}
           <div>
             <span className="inline-block px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4">
-              About Us
+              {t('about.title')}
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-              A Legacy of Trust &<br />
-              <span className="text-blue-700">African Excellence</span>
+              {t('about.subtitle')}
             </h2>
             <p className="text-gray-600 leading-relaxed mb-6">
-              Founded by Maître Jean Ngonji, our holding firm represents a vision of integrated 
-              excellence across legal, real estate, philanthropic, and financial services. For over 
-              two decades, we have been at the forefront of Africa's business landscape, delivering 
-              premium solutions that transform lives and communities.
+              {t('about.description1')}
             </p>
             <p className="text-gray-600 leading-relaxed mb-8">
-              Our four distinct entities operate with autonomy while leveraging the collective 
-              strength, reputation, and resources of the Ngonji's Holding Firm ecosystem.
+              {t('about.description2')}
             </p>
 
             <div className="grid grid-cols-2 gap-4">

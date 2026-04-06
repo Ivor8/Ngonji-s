@@ -4,8 +4,6 @@ import Navbar from './Navbar';
 import Hero from './Hero';
 import ServiceCards from './ServiceCards';
 import AboutSection from './AboutSection';
-import TeamSection from './TeamSection';
-import ContactSection from './ContactSection';
 import Footer from './Footer';
 import EntityPage from './EntityPage';
 import AdminLogin from './AdminLogin';
@@ -38,10 +36,8 @@ const AppContent: React.FC = () => {
       <Hero />
       <ServiceCards />
       <AboutSection />
-      <TeamSection />
-      <ContactSection />
       <Footer />
-      <WhatsAppButton phone="+237600000000" />
+      <WhatsAppButton phone="+237 6 79 84 14 98" />
     </div>
   );
 };

@@ -54,7 +54,7 @@ export const ENTITIES: Record<EntityKey, EntityConfig> = {
   },
   realestate: {
     key: 'realestate',
-    name: 'Egle Company',
+    name: 'Eagle Company',
     tagline: 'Building Dreams. Creating Value.',
     description: 'Leading real estate development company specializing in premium residential and commercial properties. From concept to completion, we deliver excellence in every project.',
     color: '#10b981',

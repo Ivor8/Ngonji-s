@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '@/contexts/AppContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ENTITIES, ENTITY_LIST, IMAGES } from '@/data/constants';
 import { Scale, Building2, Heart, Landmark, ArrowRight } from 'lucide-react';
 
@@ -11,14 +12,15 @@ const ENTITY_ICONS = {
 };
 
 const ENTITY_IMAGES = {
-  law: IMAGES.lawyer,
-  realestate: IMAGES.properties[0],
-  foundation: IMAGES.foundation,
-  credit: IMAGES.properties[2],
+  law: '/assets/law firm logo.jpeg',
+  realestate: '/assets/eagle company logo.jpeg',
+  foundation: '/assets/foundation probono logo.jpeg',
+  credit: '/assets/his office.jpeg',
 };
 
 const ServiceCards: React.FC = () => {
   const { openEntity } = useApp();
+  const { t } = useLanguage();
 
   return (
     <section id="services" className="py-24 bg-white">
@@ -26,14 +28,13 @@ const ServiceCards: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <span className="inline-block px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold mb-4">
-            Our Business Entities
+            {t('services.title')}
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Four Pillars of <span className="text-blue-700">Excellence</span>
+            {t('services.subtitle')}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Each entity operates independently while benefiting from the collective strength 
-            and reputation of Ngonji's Holding Firm.
+            {t('services.description')}
           </p>
         </div>
 
