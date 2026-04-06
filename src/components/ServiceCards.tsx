@@ -2,7 +2,7 @@ import React from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ENTITIES, ENTITY_LIST, IMAGES } from '@/data/constants';
-import { Scale, Building2, Heart, Landmark, ArrowRight } from 'lucide-react';
+import { Scale, Building2, Heart, Landmark, ArrowRight, MessageCircle } from 'lucide-react';
 
 const ENTITY_ICONS = {
   law: Scale,
@@ -21,6 +21,16 @@ const ENTITY_IMAGES = {
 const ServiceCards: React.FC = () => {
   const { openEntity } = useApp();
   const { t } = useLanguage();
+
+  const getTranslatedEntity = (key: keyof typeof ENTITIES) => {
+    const entity = ENTITIES[key];
+    return {
+      ...entity,
+      name: t(`entity.${key}.name`),
+      tagline: t(`entity.${key}.tagline`),
+      description: t(`entity.${key}.description`),
+    };
+  };
 
   return (
     <section id="services" className="py-24 bg-white">
@@ -41,7 +51,7 @@ const ServiceCards: React.FC = () => {
         {/* Cards Grid */}
         <div className="grid md:grid-cols-2 gap-8">
           {ENTITY_LIST.map((key, index) => {
-            const entity = ENTITIES[key];
+            const entity = getTranslatedEntity(key);
             const Icon = ENTITY_ICONS[key];
             const image = ENTITY_IMAGES[key];
 
@@ -83,20 +93,22 @@ const ServiceCards: React.FC = () => {
                     {entity.description}
                   </p>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: entity.colorLight }}>
-                        <Icon className="w-4 h-4" style={{ color: entity.colorDark }} />
-                      </div>
-                      <span className="text-sm font-medium text-gray-500">Explore</span>
-                    </div>
-                    <div
-                      className="flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all"
-                      style={{ color: entity.color }}
+                  <div className="flex items-center gap-3 mt-6">
+                    <button
+                      onClick={() => openEntity(key)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                      style={{ backgroundColor: entity.color }}
                     >
-                      Learn More
+                      {t('card.explore')}
                       <ArrowRight className="w-4 h-4" />
-                    </div>
+                    </button>
+                    <button
+                      onClick={() => window.open(`https://wa.me/${entity.phone.replace(/\D/g, '')}`, '_blank')}
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      {t('whatsapp.chat')}
+                    </button>
                   </div>
                 </div>
 
