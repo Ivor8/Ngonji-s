@@ -5,14 +5,22 @@ import TelegramButton from '@/components/TelegramButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { ENTITIES } from '@/data/constants';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Heart, Home, Users, Phone, Mail, MapPin, Clock } from 'lucide-react';
 
 const FoundationProBonoPage: React.FC = () => {
   const { t } = useLanguage();
-  const { activeEntity, entityTab, setEntityTab } = useApp();
+  const { setActiveEntity } = useApp();
+  const { tab } = useParams();
+  const navigate = useNavigate();
   const entity = ENTITIES.foundation;
+  const currentTab = tab || 'home';
 
-  const entityTabs = ['home', 'about', 'services', 'portfolio', 'contact'] as const;
+  React.useEffect(() => {
+    setActiveEntity('foundation');
+  }, [setActiveEntity]);
+
+  const entityTabs = ['home', 'about', 'services', 'portfolio', 'donate', 'contact'] as const;
 
   return (
     <div className="min-h-screen">
@@ -37,13 +45,13 @@ const FoundationProBonoPage: React.FC = () => {
               {entityTabs.map(tab => (
                 <button
                   key={tab}
-                  onClick={() => setEntityTab(tab)}
+                  onClick={() => navigate(tab === 'home' ? '/foundation-pro-bono' : `/foundation-pro-bono/${tab}`)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
-                    entityTab === tab
+                    currentTab === tab
                       ? 'text-white shadow-md'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
-                  style={entityTab === tab ? { backgroundColor: entity.color } : {}}
+                  style={currentTab === tab ? { backgroundColor: entity.color } : {}}
                 >
                   {tab}
                 </button>
@@ -52,34 +60,46 @@ const FoundationProBonoPage: React.FC = () => {
 
             {/* Tab Content */}
             <div className="bg-gray-50 rounded-xl p-8">
-              {entityTab === 'home' && (
+              {currentTab === 'home' && (
                 <div className="text-center">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Welcome to {t('entity.foundation.name')}</h3>
                   <p className="text-gray-600">{t('entity.foundation.description')}</p>
                 </div>
               )}
-              {entityTab === 'about' && (
+              {currentTab === 'about' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">About {t('entity.foundation.name')}</h3>
                   <p className="text-gray-600">{t('entity.foundation.description')}</p>
                 </div>
               )}
-              {entityTab === 'services' && (
+              {currentTab === 'services' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Our Services</h3>
                   <p className="text-gray-600">Community development and philanthropic initiatives.</p>
                 </div>
               )}
-              {entityTab === 'portfolio' && (
+              {currentTab === 'portfolio' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Portfolio</h3>
                   <p className="text-gray-600">Showcasing our community projects and impact.</p>
                 </div>
               )}
-              {entityTab === 'contact' && (
+              {currentTab === 'contact' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Contact {t('entity.foundation.name')}</h3>
                   <p className="text-gray-600">Get in touch with our foundation team.</p>
+                </div>
+              )}
+              {currentTab === 'donate' && (
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Support Our Mission</h3>
+                  <p className="text-gray-600 mb-4">Your generosity helps us continue our work in empowering communities and transforming lives across Africa.</p>
+                  <button
+                    onClick={() => window.open('https://donate.example.com', '_blank')}
+                    className="px-6 py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors"
+                  >
+                    Donate Now
+                  </button>
                 </div>
               )}
             </div>

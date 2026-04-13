@@ -11,6 +11,10 @@ import Index from "./pages/Index";
 import AboutPage from "./pages/AboutPage";
 import TeamPage from "./pages/TeamPage";
 import ContactPage from "./pages/ContactPage";
+import EagleCompanyPage from './pages/EagleCompanyPage';
+import FoundationProBonoPage from './pages/FoundationProBonoPage';
+import LawFirmPage from './pages/LawFirmPage';
+import CreditImmobilierPage from './pages/CreditImmobilierPage';
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
@@ -31,6 +35,14 @@ const App = () => (
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/team" element={<TeamPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/law-firm" element={<LawFirmPage />} />
+                <Route path="/law-firm/:tab" element={<LawFirmPage />} />
+                <Route path="/eagle-company" element={<EagleCompanyPage />} />
+                <Route path="/eagle-company/:tab" element={<EagleCompanyPage />} />
+                <Route path="/foundation-pro-bono" element={<FoundationProBonoPage />} />
+                <Route path="/foundation-pro-bono/:tab" element={<FoundationProBonoPage />} />
+                <Route path="/credit-immobilier" element={<CreditImmobilierPage />} />
+                <Route path="/credit-immobilier/:tab" element={<CreditImmobilierPage />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />

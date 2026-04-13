@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ENTITIES, ENTITY_LIST, IMAGES } from '@/data/constants';
+import { ENTITIES, ENTITY_LIST, IMAGES, ENTITY_ROUTES } from '@/data/constants';
+import { useNavigate } from 'react-router-dom';
 import { Scale, Building2, Heart, Landmark, ArrowRight, MessageCircle } from 'lucide-react';
 
 const ENTITY_ICONS = {
@@ -21,6 +22,7 @@ const ENTITY_IMAGES = {
 const ServiceCards: React.FC = () => {
   const { openEntity, setEntityTab } = useApp();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const getTranslatedEntity = (key: keyof typeof ENTITIES) => {
     const entity = ENTITIES[key];
@@ -58,7 +60,7 @@ const ServiceCards: React.FC = () => {
             return (
               <div
                 key={key}
-                onClick={() => openEntity(key)}
+                onClick={() => navigate(`/${ENTITY_ROUTES[key]}`)}
                 className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer hover:-translate-y-1"
               >
                 {/* Image */}
@@ -95,7 +97,7 @@ const ServiceCards: React.FC = () => {
                   
                   <div className="flex items-center gap-3 mt-6">
                     <button
-                      onClick={() => openEntity(key)}
+                      onClick={() => navigate(`/${ENTITY_ROUTES[key]}`)}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                       style={{ backgroundColor: entity.color }}
                     >
@@ -105,8 +107,7 @@ const ServiceCards: React.FC = () => {
                     {key === 'foundation' && (
                       <button
                         onClick={() => {
-                          openEntity(key);
-                          setEntityTab('donate');
+                          navigate('/foundation-pro-bono/donate');
                         }}
                         className="flex items-center justify-center gap-2 px-4 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
                       >

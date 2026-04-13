@@ -16,6 +16,7 @@ interface AppContextType extends AppState {
   goHome: () => void;
   openEntity: (key: EntityKey) => void;
   setEntityTab: (tab: EntityTab) => void;
+  setActiveEntity: (key: EntityKey | null) => void;
   openAdminLogin: () => void;
   loginAdmin: (email: string) => void;
   logoutAdmin: () => void;
@@ -54,6 +55,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const setActiveEntity = useCallback((key: EntityKey | null) => {
+    setState(s => ({ ...s, activeEntity: key }));
+  }, []);
+
   const openAdminLogin = useCallback(() => {
     setState(s => ({ ...s, view: 'admin-login' }));
   }, []);
@@ -71,7 +76,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state, goHome, openEntity, setEntityTab, openAdminLogin, loginAdmin, logoutAdmin, goToAdmin }}>
+    <AppContext.Provider value={{ ...state, goHome, openEntity, setEntityTab, setActiveEntity, openAdminLogin, loginAdmin, logoutAdmin, goToAdmin }}>
       {children}
     </AppContext.Provider>
   );

@@ -98,6 +98,13 @@ export const ENTITIES: Record<EntityKey, EntityConfig> = {
 
 export const ENTITY_LIST: EntityKey[] = ['law', 'realestate', 'foundation', 'credit'];
 
+export const ENTITY_ROUTES: Record<EntityKey, string> = {
+  law: 'law-firm',
+  realestate: 'eagle-company',
+  foundation: 'foundation-pro-bono',
+  credit: 'credit-immobilier',
+};
+
 export const TEAM_MEMBERS = [
   { name: 'Maître Jean Ngonji', role: 'Founder & Managing Partner', entity: 'law', image: IMAGES.team[0] },
   { name: 'Dr. Amina Egle', role: 'CEO, Egle Company', entity: 'realestate', image: IMAGES.team[1] },

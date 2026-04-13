@@ -5,12 +5,20 @@ import TelegramButton from '@/components/TelegramButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { ENTITIES } from '@/data/constants';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Building, Home, Users, Phone, Mail, MapPin, Clock } from 'lucide-react';
 
 const EagleCompanyPage: React.FC = () => {
   const { t } = useLanguage();
-  const { activeEntity, entityTab, setEntityTab } = useApp();
+  const { setActiveEntity } = useApp();
+  const { tab } = useParams();
+  const navigate = useNavigate();
   const entity = ENTITIES.realestate;
+  const currentTab = tab || 'home';
+
+  React.useEffect(() => {
+    setActiveEntity('realestate');
+  }, [setActiveEntity]);
 
   const entityTabs = ['home', 'about', 'services', 'portfolio', 'contact'] as const;
 
@@ -37,13 +45,13 @@ const EagleCompanyPage: React.FC = () => {
               {entityTabs.map(tab => (
                 <button
                   key={tab}
-                  onClick={() => setEntityTab(tab)}
+                  onClick={() => navigate(tab === 'home' ? '/eagle-company' : `/eagle-company/${tab}`)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
-                    entityTab === tab
+                    currentTab === tab
                       ? 'text-white shadow-md'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
-                  style={entityTab === tab ? { backgroundColor: entity.color } : {}}
+                  style={currentTab === tab ? { backgroundColor: entity.color } : {}}
                 >
                   {tab}
                 </button>
@@ -52,31 +60,31 @@ const EagleCompanyPage: React.FC = () => {
 
             {/* Tab Content */}
             <div className="bg-gray-50 rounded-xl p-8">
-              {entityTab === 'home' && (
+              {currentTab === 'home' && (
                 <div className="text-center">
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Welcome to {t('entity.realestate.name')}</h3>
                   <p className="text-gray-600">{t('entity.realestate.description')}</p>
                 </div>
               )}
-              {entityTab === 'about' && (
+              {currentTab === 'about' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">About {t('entity.realestate.name')}</h3>
                   <p className="text-gray-600">{t('entity.realestate.description')}</p>
                 </div>
               )}
-              {entityTab === 'services' && (
+              {currentTab === 'services' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Our Services</h3>
                   <p className="text-gray-600">Real estate solutions for residential and commercial properties.</p>
                 </div>
               )}
-              {entityTab === 'portfolio' && (
+              {currentTab === 'portfolio' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Portfolio</h3>
                   <p className="text-gray-600">Showcasing our premium properties and developments.</p>
                 </div>
               )}
-              {entityTab === 'contact' && (
+              {currentTab === 'contact' && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Contact {t('entity.realestate.name')}</h3>
                   <p className="text-gray-600">Get in touch with our real estate team.</p>

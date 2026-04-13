@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useNavigate } from 'react-router-dom';
-import { ENTITIES, ENTITY_LIST, EntityKey } from '@/data/constants';
+import { ENTITIES, ENTITY_LIST, EntityKey, ENTITY_ROUTES } from '@/data/constants';
 import { Menu, X, ChevronDown, Shield, Globe } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const { view, activeEntity, entityTab, goHome, openEntity, setEntityTab, openAdminLogin, isAdminLoggedIn, goToAdmin } = useApp();
@@ -31,9 +30,16 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]); // Re-run when route changes
 
-  const entityTabs = ['home', 'about', 'services', 'portfolio', 'contact'] as const;
+  const isEntityPage = Object.values(ENTITY_ROUTES).some(route => location.pathname.startsWith(`/${route}`));
+  const currentEntityRoute = Object.values(ENTITY_ROUTES).find(route => location.pathname.startsWith(`/${route}`));
+  const currentEntity = currentEntityRoute ? (Object.keys(ENTITY_ROUTES).find(key => ENTITY_ROUTES[key as EntityKey] === currentEntityRoute) as EntityKey) : null;
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const currentTab = pathParts.length > 1 && currentEntityRoute === pathParts[0] ? pathParts[1] : 'home';
 
-  const entityConfig = activeEntity ? ENTITIES[activeEntity] : null;
+  const entityConfig = currentEntity ? ENTITIES[currentEntity] : null;
+  const entityTabs = currentEntity === 'foundation' ? ['home', 'about', 'services', 'portfolio', 'donate', 'contact'] : ['home', 'about', 'services', 'portfolio', 'contact'];
+
+  const entityTabsConst = ['home', 'about', 'services', 'portfolio', 'contact'] as const;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100">
@@ -56,10 +62,10 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {view === 'entity' && entityConfig ? (
+            {isEntityPage && currentEntity && entityConfig ? (
               // Entity sub-navigation
               <>
-                <button onClick={goHome} className="px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-700 hover:text-gray-900 hover:bg-gray-100">
+                <button onClick={() => navigate('/')} className="px-3 py-2 rounded-lg text-sm font-medium transition-all text-gray-700 hover:text-gray-900 hover:bg-gray-100">
                   {t('nav.allServices')}
                 </button>
                 <span className="mx-1 text-gray-400">/</span>
@@ -70,19 +76,19 @@ const Navbar: React.FC = () => {
                 {entityTabs.map(tab => (
                   <button
                     key={tab}
-                    onClick={() => setEntityTab(tab)}
+                    onClick={() => navigate(tab === 'home' ? `/${ENTITY_ROUTES[currentEntity]}` : `/${ENTITY_ROUTES[currentEntity]}/${tab}`)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
-                      entityTab === tab
+                      currentTab === tab
                         ? 'text-white shadow-md'
                         : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                     }`}
-                    style={entityTab === tab ? { backgroundColor: entityConfig.color } : {}}
+                    style={currentTab === tab ? { backgroundColor: entityConfig.color } : {}}
                   >
                     {tab}
                   </button>
                 ))}
               </>
-            ) : view === 'home' ? (
+            ) : (
               // Main navigation
               <>
                 <div className="relative">
@@ -99,7 +105,7 @@ const Navbar: React.FC = () => {
                         return (
                           <button
                             key={key}
-                            onClick={() => { openEntity(key); setDropdownOpen(false); }}
+                            onClick={() => { navigate(`/${ENTITY_ROUTES[key]}`); setDropdownOpen(false); }}
                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
                           >
                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: e.color }} />
@@ -127,7 +133,7 @@ const Navbar: React.FC = () => {
                   </Link>
                 ))}
               </>
-            ) : null}
+            )}
           </div>
 
           {/* Right side */}
@@ -164,20 +170,20 @@ const Navbar: React.FC = () => {
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t shadow-xl animate-in slide-in-from-top-2 duration-300">
           <div className="px-4 py-4 space-y-2">
-            {view === 'entity' && entityConfig ? (
+            {isEntityPage && currentEntity && entityConfig ? (
               <>
-                <button onClick={() => { goHome(); setMobileOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+                <button onClick={() => { navigate('/'); setMobileOpen(false); }} className="w-full text-left px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
                   All Services
                 </button>
                 <div className="border-t my-2" />
                 {entityTabs.map(tab => (
                   <button
                     key={tab}
-                    onClick={() => { setEntityTab(tab); setMobileOpen(false); }}
+                    onClick={() => { navigate(tab === 'home' ? `/${ENTITY_ROUTES[currentEntity]}` : `/${ENTITY_ROUTES[currentEntity]}/${tab}`); setMobileOpen(false); }}
                     className={`w-full text-left px-4 py-3 rounded-lg capitalize font-medium transition-all ${
-                      entityTab === tab ? 'text-white' : 'text-gray-700 hover:bg-gray-50'
+                      currentTab === tab ? 'text-white' : 'text-gray-700 hover:bg-gray-50'
                     }`}
-                    style={entityTab === tab ? { backgroundColor: entityConfig.color } : {}}
+                    style={currentTab === tab ? { backgroundColor: entityConfig.color } : {}}
                   >
                     {tab}
                   </button>
@@ -190,7 +196,7 @@ const Navbar: React.FC = () => {
                   return (
                     <button
                       key={key}
-                      onClick={() => { openEntity(key); setMobileOpen(false); }}
+                      onClick={() => { navigate(`/${ENTITY_ROUTES[key]}`); setMobileOpen(false); }}
                       className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: e.color }} />
