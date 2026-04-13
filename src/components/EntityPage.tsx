@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useApp } from '@/contexts/AppContext';
-import { ENTITIES, IMAGES, EntityKey, TEAM_MEMBERS } from '@/data/constants';
+import { ENTITIES, IMAGES, EntityKey, TEAM_MEMBERS, ENTITY_HERO_IMAGES } from '@/data/constants';
 import ContactForm from './ContactForm';
 import BookingForm from './BookingForm';
 import { Scale, Building2, Heart, Landmark, ArrowRight, MapPin, Phone, Mail, Clock, MessageCircle, Briefcase, Star, Users, Globe, ChevronRight } from 'lucide-react';
@@ -11,13 +11,6 @@ const ENTITY_ICONS: Record<EntityKey, React.FC<any>> = {
   realestate: Building2,
   foundation: Heart,
   credit: Landmark,
-};
-
-const ENTITY_HERO_IMAGES: Record<EntityKey, string> = {
-  law: IMAGES.lawyer,
-  realestate: IMAGES.properties[0],
-  foundation: IMAGES.foundation,
-  credit: IMAGES.properties[2],
 };
 
 const EntityPage: React.FC = () => {

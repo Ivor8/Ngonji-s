@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
   const currentTab = pathParts.length > 1 && currentEntityRoute === pathParts[0] ? pathParts[1] : 'home';
 
   const entityConfig = currentEntity ? ENTITIES[currentEntity] : null;
-  const entityTabs = currentEntity === 'foundation' ? ['home', 'about', 'services', 'portfolio', 'donate', 'contact'] : ['home', 'about', 'services', 'portfolio', 'contact'];
+  const entityTabs = currentEntity === 'foundation' ? ['home', 'about', 'services', 'portfolio', 'donate', 'contact'] : ['home', 'about', 'services', 'portfolio', 'testimonials', 'contact'];
 
   const entityTabsConst = ['home', 'about', 'services', 'portfolio', 'contact'] as const;
 

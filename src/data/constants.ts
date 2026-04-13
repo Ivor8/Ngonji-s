@@ -105,6 +105,13 @@ export const ENTITY_ROUTES: Record<EntityKey, string> = {
   credit: 'credit-immobilier',
 };
 
+export const ENTITY_HERO_IMAGES: Record<EntityKey, string> = {
+  law: IMAGES.lawyer,
+  realestate: IMAGES.properties[0],
+  foundation: IMAGES.foundation,
+  credit: IMAGES.properties[2],
+};
+
 export const TEAM_MEMBERS = [
   { name: 'Maître Jean Ngonji', role: 'Founder & Managing Partner', entity: 'law', image: IMAGES.team[0] },
   { name: 'Dr. Amina Egle', role: 'CEO, Egle Company', entity: 'realestate', image: IMAGES.team[1] },
