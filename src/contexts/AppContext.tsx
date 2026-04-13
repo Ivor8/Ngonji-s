@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import { EntityKey } from '@/data/constants';
 
 type View = 'home' | 'entity' | 'admin-login' | 'admin';
-type EntityTab = 'home' | 'about' | 'services' | 'portfolio' | 'contact';
+type EntityTab = 'home' | 'about' | 'services' | 'portfolio' | 'contact' | 'team' | 'donate';
 
 interface AppState {
   view: View;

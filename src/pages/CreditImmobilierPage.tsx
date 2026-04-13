@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import WhatsAppButton from '@/components/WhatsAppButton';
+import TelegramButton from '@/components/TelegramButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { ENTITIES } from '@/data/constants';
@@ -87,7 +87,7 @@ const CreditImmobilierPage: React.FC = () => {
         </section>
       </main>
       <Footer />
-      <WhatsAppButton phone={entity.whatsapp} />
+      <TelegramButton phone={entity.whatsapp} />
     </div>
   );
 };

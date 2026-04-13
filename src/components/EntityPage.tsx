@@ -364,19 +364,19 @@ const EntityPage: React.FC = () => {
               </div>
             ))}
 
-            {/* WhatsApp */}
+            {/* Telegram */}
             <a
-              href={`https://wa.me/${config.whatsapp.replace(/[^0-9+]/g, '')}?text=${encodeURIComponent(`Hello, I would like to inquire about ${config.name} services.`)}`}
+              href={`https://t.me/+${config.whatsapp.replace(/[^0-9+]/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors"
+              className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition-colors"
             >
-              <div className="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
                 <MessageCircle className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">WhatsApp</h4>
-                <p className="text-green-700 text-sm font-medium">Chat with us directly</p>
+                <h4 className="font-semibold text-gray-900">Telegram</h4>
+                <p className="text-blue-700 text-sm font-medium">Chat with us directly</p>
               </div>
             </a>
           </div>
@@ -390,15 +390,97 @@ const EntityPage: React.FC = () => {
     </div>
   );
 
+  // Donate Tab (Foundation only)
+  const renderDonate = () => (
+    <div className="pt-24 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style={{ backgroundColor: config.colorLight, color: config.colorDark }}>
+            <Heart className="w-4 h-4" /> Support Our Mission
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Make a Donation</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Your generosity helps us continue our work in empowering communities and transforming lives across Africa.</p>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 lg:p-12">
+            <div className="text-center mb-8">
+              <Heart className="w-16 h-16 mx-auto mb-4" style={{ color: config.color }} />
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Support Foundation Pro Bono</h2>
+              <p className="text-gray-600">Every contribution, no matter the size, makes a difference in the lives of those we serve.</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  { amount: '$25', desc: 'Provides educational materials for one child' },
+                  { amount: '$50', desc: 'Supports a family with basic necessities' },
+                  { amount: '$100', desc: 'Funds community health initiatives' },
+                ].map((option, i) => (
+                  <button
+                    key={i}
+                    className="p-4 border border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition-colors text-center"
+                  >
+                    <div className="font-bold text-gray-900 text-lg">{option.amount}</div>
+                    <div className="text-xs text-gray-500 mt-1">{option.desc}</div>
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => window.open('https://donate.example.com', '_blank')}
+                className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-colors"
+              >
+                <Heart className="w-5 h-5" />
+                Donate Now
+              </button>
+
+              <p className="text-center text-sm text-gray-500">
+                Your donation will open our secure donation portal where you can complete your contribution safely.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const tabs: Record<string, () => JSX.Element> = {
     home: renderHome,
     about: renderAbout,
     services: renderServices,
     portfolio: renderPortfolio,
     contact: renderContact,
+    donate: renderDonate,
   };
 
-  return <div className="min-h-screen bg-gray-50">{tabs[entityTab]?.() || renderHome()}</div>;
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {entity === 'foundation' && (
+        <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center py-4">
+              {['home', 'about', 'services', 'portfolio', 'donate', 'contact'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setEntityTab(tab as EntityTab)}
+                  className={`px-4 py-2 mx-1 rounded-lg text-sm font-medium capitalize transition-all ${
+                    entityTab === tab
+                      ? 'text-white shadow-md'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                  style={entityTab === tab ? { backgroundColor: config.color } : {}}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {tabs[entityTab]?.() || renderHome()}
+    </div>
+  );
 };
 
 export default EntityPage;

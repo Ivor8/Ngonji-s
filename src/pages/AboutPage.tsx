@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import WhatsAppButton from '@/components/WhatsAppButton';
+import TelegramButton from '@/components/TelegramButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Award, Users, Globe, TrendingUp } from 'lucide-react';
 
@@ -68,7 +68,7 @@ const AboutPage: React.FC = () => {
         </section>
       </main>
       <Footer />
-      <WhatsAppButton phone="+237 6 79 84 14 98" />
+      <TelegramButton phone="+237 6 79 84 14 98" />
     </div>
   );
 };

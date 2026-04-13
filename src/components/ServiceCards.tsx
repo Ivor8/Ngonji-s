@@ -19,7 +19,7 @@ const ENTITY_IMAGES = {
 };
 
 const ServiceCards: React.FC = () => {
-  const { openEntity } = useApp();
+  const { openEntity, setEntityTab } = useApp();
   const { t } = useLanguage();
 
   const getTranslatedEntity = (key: keyof typeof ENTITIES) => {
@@ -102,12 +102,24 @@ const ServiceCards: React.FC = () => {
                       {t('card.explore')}
                       <ArrowRight className="w-4 h-4" />
                     </button>
+                    {key === 'foundation' && (
+                      <button
+                        onClick={() => {
+                          openEntity(key);
+                          setEntityTab('donate');
+                        }}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
+                      >
+                        Donate
+                        <Heart className="w-4 h-4" />
+                      </button>
+                    )}
                     <button
-                      onClick={() => window.open(`https://wa.me/${entity.phone.replace(/\D/g, '')}`, '_blank')}
-                      className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+                      onClick={() => window.open(`https://t.me/+${entity.phone.replace(/\D/g, '')}`, '_blank')}
+                      className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      {t('whatsapp.chat')}
+                      {t('telegram.chat')}
                     </button>
                   </div>
                 </div>

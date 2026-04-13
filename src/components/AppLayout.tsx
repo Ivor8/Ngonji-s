@@ -8,7 +8,7 @@ import Footer from './Footer';
 import EntityPage from './EntityPage';
 import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
-import WhatsAppButton from './WhatsAppButton';
+import TelegramButton from './TelegramButton';
 import { ENTITIES } from '@/data/constants';
 
 const AppContent: React.FC = () => {
@@ -24,7 +24,7 @@ const AppContent: React.FC = () => {
         <Navbar />
         <EntityPage />
         <Footer />
-        <WhatsAppButton phone={config.whatsapp} message={`Hello, I'd like to inquire about ${config.name} services.`} />
+        <TelegramButton phone={config.whatsapp} message={`Hello, I'd like to inquire about ${config.name} services.`} />
       </div>
     );
   }
@@ -37,7 +37,7 @@ const AppContent: React.FC = () => {
       <ServiceCards />
       <AboutSection />
       <Footer />
-      <WhatsAppButton phone="+237 6 79 84 14 98" />
+      <TelegramButton phone="+237 6 79 84 14 98" />
     </div>
   );
 };
