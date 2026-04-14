@@ -82,9 +82,172 @@ const FoundationProBonoPage: React.FC = () => {
             {/* Tab Content */}
             <div className="bg-gray-50 rounded-xl p-8">
               {currentTab === 'home' && (
-                <div className="text-center">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Welcome to {t('entity.foundation.name')}</h3>
-                  <p className="text-gray-600">{t('entity.foundation.description')}</p>
+                <div className="space-y-12">
+                  <div className="relative overflow-hidden rounded-3xl bg-cover bg-center" style={{ backgroundImage: `url(${ENTITY_HERO_IMAGES.foundation})` }}>
+                    <div className="absolute inset-0 bg-slate-900/55" />
+                    <div className="relative px-6 py-16 sm:px-10 lg:px-16 lg:py-24 text-white">
+                      <span className="inline-flex rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-[0.2em] text-slate-100 mb-4">
+                        {t('entity.foundation.name')}
+                      </span>
+                      <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight max-w-3xl">
+                        Empowering communities with programs that change lives.
+                      </h3>
+                      <p className="mt-6 max-w-2xl text-base sm:text-lg text-slate-200">
+                        {t('entity.foundation.description')}
+                      </p>
+                      <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                        <button
+                          onClick={() => navigate('/foundation-pro-bono/services')}
+                          className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-slate-900/5 transition hover:bg-slate-100"
+                        >
+                          Explore Programs
+                        </button>
+                        <button
+                          onClick={() => navigate('/foundation-pro-bono/portfolio')}
+                          className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                        >
+                          View Impact
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Welcome to {t('entity.foundation.name')}</h3>
+                    <p className="text-gray-600 max-w-2xl mx-auto mb-8">{t('entity.foundation.description')}</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold" style={{ color: entity.color }}>50K+</div>
+                        <div className="text-sm text-gray-600">Lives Impacted</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold" style={{ color: entity.color }}>15+</div>
+                        <div className="text-sm text-gray-600">Years Serving</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold" style={{ color: entity.color }}>200+</div>
+                        <div className="text-sm text-gray-600">Communities</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold" style={{ color: entity.color }}>100+</div>
+                        <div className="text-sm text-gray-600">Programs</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Featured Programs */}
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-6">Our Programs</h4>
+                    {loading ? (
+                      <div className="flex justify-center py-10">
+                        <div className="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin" style={{ borderTopColor: entity.color }} />
+                      </div>
+                    ) : (
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {services.slice(0, 3).map((s, i) => (
+                          <div key={s.id} className="group p-6 rounded-2xl border border-gray-100 hover:border-transparent hover:shadow-xl transition-all duration-300 cursor-pointer">
+                            <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: entity.colorLight }}>
+                              <Briefcase className="w-5 h-5" style={{ color: entity.colorDark }} />
+                            </div>
+                            <h3 className="font-bold text-gray-900 mb-2">{s.title}</h3>
+                            <p className="text-sm text-gray-600 leading-relaxed">{s.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Impact Portfolio */}
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-6">Our Impact</h4>
+                    {loading ? (
+                      <div className="flex justify-center py-10">
+                        <div className="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin" style={{ borderTopColor: entity.color }} />
+                      </div>
+                    ) : portfolio.length === 0 ? (
+                      <div className="text-center py-10 text-gray-500">
+                        <Heart className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                        <p>Impact stories coming soon.</p>
+                      </div>
+                    ) : (
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {portfolio.slice(0, 3).map((p, i) => (
+                          <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            {p.image_url && (
+                              <div className="relative h-40 overflow-hidden">
+                                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                {p.is_featured && (
+                                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: entity.color }}>
+                                    Featured
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            <div className="p-4">
+                              <h3 className="font-bold text-gray-900 text-sm mb-2">{p.title}</h3>
+                              <p className="text-xs text-gray-600 leading-relaxed">{p.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quick Donation Section */}
+                  <div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-6">Support Our Mission</h4>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100">
+                        <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center mb-4">
+                          <Heart className="w-6 h-6 text-white" />
+                        </div>
+                        <h5 className="font-bold text-gray-900 mb-2">One-Time Donation</h5>
+                        <p className="text-sm text-gray-600 mb-4">Make an immediate impact with a single contribution.</p>
+                        <button
+                          onClick={() => navigate('/foundation-pro-bono/donate')}
+                          className="w-full px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-colors text-sm"
+                        >
+                          Donate Now
+                        </button>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
+                        <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
+                          <Users className="w-6 h-6 text-white" />
+                        </div>
+                        <h5 className="font-bold text-gray-900 mb-2">Monthly Giving</h5>
+                        <p className="text-sm text-gray-600 mb-4">Become a sustaining partner for long-term change.</p>
+                        <button
+                          onClick={() => navigate('/foundation-pro-bono/donate')}
+                          className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors text-sm"
+                        >
+                          Monthly Support
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Call to Action */}
+                  <div className="text-center bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-8">
+                    <h4 className="text-xl font-bold text-gray-900 mb-4">Join Our Mission</h4>
+                    <p className="text-gray-600 mb-6">Together, we can create lasting change in communities across Africa.</p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <button
+                        onClick={() => navigate('/foundation-pro-bono/donate')}
+                        className="px-6 py-3 rounded-lg font-semibold text-white transition-colors"
+                        style={{ backgroundColor: entity.color }}
+                      >
+                        Donate Today
+                      </button>
+                      <button
+                        onClick={() => navigate('/foundation-pro-bono/contact')}
+                        className="px-6 py-3 rounded-lg font-semibold border-2 transition-colors"
+                        style={{ borderColor: entity.color, color: entity.color }}
+                      >
+                        Get Involved
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
               {currentTab === 'about' && (
@@ -263,9 +426,16 @@ const FoundationProBonoPage: React.FC = () => {
                 </div>
               )}
               {currentTab === 'contact' && (
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Contact {t('entity.foundation.name')}</h3>
-                  <p className="text-gray-600">Get in touch with our foundation team.</p>
+                <div className="text-center py-12">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Contact Us</h3>
+                  <p className="text-gray-600 mb-6">Get in touch with our foundation team through our main contact page.</p>
+                  <button
+                    onClick={() => navigate('/contact')}
+                    className="px-6 py-3 rounded-lg font-semibold text-white transition-colors"
+                    style={{ backgroundColor: entity.color }}
+                  >
+                    Go to Contact Page
+                  </button>
                 </div>
               )}
               {currentTab === 'donate' && (
