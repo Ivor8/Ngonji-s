@@ -8,6 +8,7 @@ import { ENTITIES, ENTITY_HERO_IMAGES } from '@/data/constants';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Building, Home, Users, Phone, Mail, MapPin, Clock, Briefcase, Award, Globe, TrendingUp } from 'lucide-react';
+import constructionImage from '../../assets/in construction bg 1.jpeg';
 
 const EagleCompanyPage: React.FC = () => {
   const { t } = useLanguage();
@@ -251,7 +252,7 @@ const EagleCompanyPage: React.FC = () => {
                       {/* Left - Image */}
                       <div className="relative">
                         <div className="rounded-2xl overflow-hidden shadow-2xl">
-                          <img src={ENTITY_HERO_IMAGES.realestate} alt={entity.name} className="w-full h-96 object-cover" />
+                          <img src={constructionImage} alt={entity.name} className="w-full h-96 object-cover" />
                         </div>
                         {/* Floating card */}
                         <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl p-5 border border-gray-100 hidden md:block">

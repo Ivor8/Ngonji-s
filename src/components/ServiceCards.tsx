@@ -64,7 +64,7 @@ const ServiceCards: React.FC = () => {
                 className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer hover:-translate-y-1"
               >
                 {/* Image */}
-                <div className="relative h-70 overflow-hidden">
+                <div className="relative h-60 overflow-hidden">
                   <img
                     src={image}
                     alt={entity.name}

@@ -18,7 +18,7 @@ import CreditImmobilierPage from './pages/CreditImmobilierPage';
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
-
+ 
 const queryClient = new QueryClient();
 
 const App = () => (
