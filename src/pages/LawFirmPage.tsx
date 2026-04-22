@@ -7,8 +7,39 @@ import { useApp } from '@/contexts/AppContext';
 import { ENTITIES, ENTITY_HERO_IMAGES } from '@/data/constants';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { Scale, Home, Users, Phone, Mail, MapPin, Clock, Briefcase, Award, Globe, TrendingUp } from 'lucide-react';
+import { Scale, Home, Users, Phone, Mail, MapPin, Clock, Briefcase, Award, Globe, TrendingUp, MessageCircle } from 'lucide-react';
 import teamLadyImage from '../../assets/ngonji.jpeg';
+
+// Team members based on image files
+const LAW_FIRM_TEAM = [
+  {
+    name: 'Barista Ngonji',
+    role: 'Founder of Ngonji\'s Law Firm',
+    image: '/assets/team/ngonji law firm/Barista Ngonji, Founder of Ngonji\'s law firm.jpeg',
+    description: 'With over 25 years of experience in corporate and international law, Maître Ngonji leads our firm with unparalleled expertise and dedication to justice.',
+    expertise: ['Corporate Law', 'International Arbitration', 'Legal Strategy'],
+    education: 'LLM, Harvard Law School',
+    languages: ['English', 'French', 'Cameroonian Pidgin']
+  },
+  {
+    name: 'Junior Legal Counsel',
+    role: 'Conseiller Junior',
+    image: '/assets/team/ngonji law firm/Conseiller junior.jpeg',
+    description: 'Specializing in family law and civil litigation, our junior counsel brings fresh perspectives and meticulous attention to every case.',
+    expertise: ['Family Law', 'Civil Litigation', 'Contract Law'],
+    education: 'LLB, University of Douala',
+    languages: ['English', 'French']
+  },
+  {
+    name: 'Senior Associate',
+    role: 'Senior Legal Associate',
+    image: '/assets/team/ngonji law firm/No name no positon, use demo data.jpeg',
+    description: 'Expert in criminal defense and human rights law, ensuring justice and protection for our clients\' fundamental rights.',
+    expertise: ['Criminal Law', 'Human Rights', 'Constitutional Law'],
+    education: 'LLM, University of Yaoundé',
+    languages: ['English', 'French', 'Spanish']
+  }
+];
 
 const LawFirmPage: React.FC = () => {
   const { t } = useLanguage();
@@ -42,7 +73,7 @@ const LawFirmPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const entityTabs = ['home', 'about', 'services', 'portfolio', 'testimonials', 'contact'] as const;
+  const entityTabs = ['home', 'about', 'services', 'portfolio', 'team', 'contact'] as const;
 
   return (
     <div className="min-h-screen">
@@ -194,41 +225,93 @@ const LawFirmPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Testimonials */}
+                  {/* Team Section */}
                   <div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-6">Client Testimonials</h4>
-                    {loading ? (
-                      <div className="flex justify-center py-10">
-                        <div className="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin" style={{ borderTopColor: entity.color }} />
-                      </div>
-                    ) : testimonials.length === 0 ? (
-                      <div className="text-center py-10 text-gray-500">
-                        <Award className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                        <p>Testimonials coming soon.</p>
-                      </div>
-                    ) : (
-                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {testimonials.slice(0, 3).map((t, i) => (
-                          <div key={t.id} className="p-4 rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300">
-                            <div className="flex items-center gap-1 mb-3">
-                              {[...Array(5)].map((_, star) => (
-                                <Award key={star} className="w-3 h-3" style={{ color: entity.color }} />
-                              ))}
-                            </div>
-                            <p className="text-gray-600 italic text-sm mb-3">"{t.message}"</p>
-                            <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                <span className="text-xs font-semibold text-gray-600">{t.name ? t.name.charAt(0).toUpperCase() : '?'}</span>
+                    <h4 className="text-xl font-bold text-gray-900 mb-6">Meet Our Legal Team</h4>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {LAW_FIRM_TEAM.map((member, i) => (
+                        <div key={i} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                          {/* Image Section */}
+                          <div className="relative h-80 overflow-hidden">
+                            <img 
+                              src={member.image} 
+                              alt={member.name} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                            <div className="absolute bottom-4 left-4 right-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: entity.color }} />
+                                <span className="text-xs font-medium text-white/90">Available</span>
                               </div>
-                              <div>
-                                <h4 className="font-semibold text-gray-900 text-sm">{t.name || 'Anonymous'}</h4>
-                                <p className="text-xs text-gray-500">{t.position || 'Client'}</p>
-                              </div>
+                              <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
+                              <p className="text-sm text-white/90">{member.role}</p>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                          
+                          {/* Content Section */}
+                          <div className="p-6">
+                            <p className="text-gray-600 text-sm leading-relaxed mb-4">{member.description}</p>
+                            
+                            {/* Expertise */}
+                            <div className="mb-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Expertise</h4>
+                              <div className="flex flex-wrap gap-1">
+                                {member.expertise.map((skill, j) => (
+                                  <span 
+                                    key={j} 
+                                    className="px-2 py-1 text-xs font-medium rounded-full" 
+                                    style={{ backgroundColor: entity.colorLight, color: entity.colorDark }}
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            {/* Education & Languages */}
+                            <div className="grid grid-cols-2 gap-4 mb-4 text-xs">
+                              <div className="flex items-center gap-2">
+                                <Award className="w-3 h-3" style={{ color: entity.color }} />
+                                <div>
+                                  <p className="text-gray-500">Education</p>
+                                  <p className="font-medium text-gray-700">{member.education}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Globe className="w-3 h-3" style={{ color: entity.color }} />
+                                <div>
+                                  <p className="text-gray-500">Languages</p>
+                                  <p className="font-medium text-gray-700">{member.languages.join(', ')}</p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Contact Button */}
+                            <button 
+                              onClick={() => navigate('/law-firm/contact')}
+                              className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border hover:border-transparent"
+                              style={{ 
+                                backgroundColor: entity.colorLight, 
+                                color: entity.colorDark,
+                                borderColor: entity.color 
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = entity.color;
+                                e.currentTarget.style.color = 'white';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = entity.colorLight;
+                                e.currentTarget.style.color = entity.colorDark;
+                              }}
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                              Contact {member.name.split(' ')[0]}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Call to Action */}
@@ -360,36 +443,93 @@ const LawFirmPage: React.FC = () => {
                   )}
                 </div>
               )}
-              {currentTab === 'testimonials' && (
+              {currentTab === 'team' && (
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Client Testimonials</h3>
-                  {loading ? (
-                    <div className="flex justify-center py-20">
-                      <div className="w-10 h-10 border-4 border-gray-200 rounded-full animate-spin" style={{ borderTopColor: entity.color }} />
-                    </div>
-                  ) : (
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                      {testimonials.map((t, i) => (
-                        <div key={t.id} className="p-6 rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300">
-                          <div className="flex items-center gap-1 mb-4">
-                            {[...Array(5)].map((_, star) => (
-                              <Award key={star} className="w-4 h-4" style={{ color: entity.color }} />
-                            ))}
-                          </div>
-                          <p className="text-gray-600 italic mb-4">"{t.message}"</p>
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                              <span className="text-sm font-semibold text-gray-600">{t.name ? t.name.charAt(0).toUpperCase() : '?'}</span>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Our Legal Team</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {LAW_FIRM_TEAM.map((member, i) => (
+                      <div key={i} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                        {/* Image Section */}
+                        <div className="relative h-80 overflow-hidden">
+                          <img 
+                            src={member.image} 
+                            alt={member.name} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                          <div className="absolute bottom-4 left-4 right-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: entity.color }} />
+                              <span className="text-xs font-medium text-white/90">Available</span>
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900">{t.name || 'Anonymous'}</h4>
-                              <p className="text-sm text-gray-500">{t.position || 'Client'}</p>
-                            </div>
+                            <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
+                            <p className="text-sm text-white/90">{member.role}</p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        
+                        {/* Content Section */}
+                        <div className="p-6">
+                          <p className="text-gray-600 text-sm leading-relaxed mb-4">{member.description}</p>
+                          
+                          {/* Expertise */}
+                          <div className="mb-4">
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Expertise</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {member.expertise.map((skill, j) => (
+                                <span 
+                                  key={j} 
+                                  className="px-2 py-1 text-xs font-medium rounded-full" 
+                                  style={{ backgroundColor: entity.colorLight, color: entity.colorDark }}
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Education & Languages */}
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-xs">
+                            <div className="flex items-center gap-2">
+                              <Award className="w-3 h-3" style={{ color: entity.color }} />
+                              <div>
+                                <p className="text-gray-500">Education</p>
+                                <p className="font-medium text-gray-700">{member.education}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Globe className="w-3 h-3" style={{ color: entity.color }} />
+                              <div>
+                                <p className="text-gray-500">Languages</p>
+                                <p className="font-medium text-gray-700">{member.languages.join(', ')}</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Contact Button */}
+                          <button 
+                            onClick={() => navigate('/law-firm/contact')}
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border hover:border-transparent"
+                            style={{ 
+                              backgroundColor: entity.colorLight, 
+                              color: entity.colorDark,
+                              borderColor: entity.color 
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = entity.color;
+                              e.currentTarget.style.color = 'white';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = entity.colorLight;
+                              e.currentTarget.style.color = entity.colorDark;
+                            }}
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            Contact {member.name.split(' ')[0]}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               {currentTab === 'contact' && (
