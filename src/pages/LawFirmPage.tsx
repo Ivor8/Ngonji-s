@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { ENTITIES, ENTITY_HERO_IMAGES } from '@/data/constants';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { Scale, Home, Users, Phone, Mail, MapPin, Clock, Briefcase, Award, Globe, TrendingUp, MessageCircle } from 'lucide-react';
 import teamLadyImage from '../../assets/ngonji.jpeg';
 
@@ -60,15 +60,24 @@ const LawFirmPage: React.FC = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const [sRes, pRes, tRes] = await Promise.all([
-        supabase.from('services').select('*').eq('entity', 'law').eq('is_active', true).order('sort_order'),
-        supabase.from('portfolio').select('*').eq('entity', 'law').order('created_at', { ascending: false }),
-        supabase.from('testimonials').select('*').eq('entity', 'law').eq('is_active', true),
-      ]);
-      setServices(sRes.data || []);
-      setPortfolio(pRes.data || []);
-      setTestimonials(tRes.data || []);
-      setLoading(false);
+      try {
+        const [sRes, pRes, tRes] = await Promise.all([
+          api.getServices({ entity: 'law', is_active: true }),
+          api.getPortfolioItems({ entity: 'law' }),
+          api.getTestimonials({ entity: 'law', is_active: true }),
+        ]);
+        setServices(sRes || []);
+        setPortfolio(pRes || []);
+        setTestimonials(tRes || []);
+      } catch (error) {
+        console.error('Error fetching law firm data:', error);
+        // Set empty arrays on error to prevent UI crashes
+        setServices([]);
+        setPortfolio([]);
+        setTestimonials([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
@@ -207,7 +216,7 @@ const LawFirmPage: React.FC = () => {
                           <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             {p.image_url && (
                               <div className="relative h-40 overflow-hidden">
-                                <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <img src={p.image_url.startsWith('http') ? p.image_url : `http://localhost:5000${p.image_url}`} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 {p.is_featured && (
                                   <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: entity.color }}>
                                     Featured
@@ -417,7 +426,7 @@ const LawFirmPage: React.FC = () => {
                         <div key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                           {p.image_url && (
                             <div className="relative h-52 overflow-hidden">
-                              <img src={p.image_url} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                              <img src={p.image_url.startsWith('http') ? p.image_url : `http://localhost:5000${p.image_url}`} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                               {p.is_featured && (
                                 <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: entity.color }}>
                                   Featured

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { EntityKey, ENTITIES } from '@/data/constants';
 import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -28,15 +28,15 @@ const ContactForm: React.FC<ContactFormProps> = ({ entity, compact = false }) =>
     if (!validate()) return;
     setStatus('loading');
     try {
-      const { error } = await supabase.from('contacts').insert({
+      await api.createContact({
         entity: entity || 'general',
         ...form,
       });
-      if (error) throw error;
       setStatus('success');
       setForm({ full_name: '', email: '', phone: '', subject: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
-    } catch {
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
       setStatus('error');
       setTimeout(() => setStatus('idle'), 5000);
     }

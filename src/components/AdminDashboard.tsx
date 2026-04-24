@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { useApp } from '@/contexts/AppContext';
 import { ENTITIES, ENTITY_LIST, EntityKey } from '@/data/constants';
 import { 
@@ -25,20 +25,32 @@ const AdminDashboard: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<any>({});
   const [saving, setSaving] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
 
   const fetchAll = async () => {
     setLoading(true);
-    const [s, p, c, b] = await Promise.all([
-      supabase.from('services').select('*').order('entity').order('sort_order'),
-      supabase.from('portfolio').select('*').order('created_at', { ascending: false }),
-      supabase.from('contacts').select('*').order('created_at', { ascending: false }),
-      supabase.from('bookings').select('*').order('created_at', { ascending: false }),
-    ]);
-    setServices(s.data || []);
-    setPortfolio(p.data || []);
-    setContacts(c.data || []);
-    setBookings(b.data || []);
-    setLoading(false);
+    try {
+      const [s, p, c, b] = await Promise.all([
+        api.getServices(),
+        api.getPortfolioItems(),
+        api.getContacts(),
+        api.getBookings(),
+      ]);
+      setServices(s || []);
+      setPortfolio(p || []);
+      setContacts(c || []);
+      setBookings(b || []);
+    } catch (error) {
+      console.error('Error fetching admin data:', error);
+      // Set empty arrays on error to prevent UI crashes
+      setServices([]);
+      setPortfolio([]);
+      setContacts([]);
+      setBookings([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchAll(); }, []);
@@ -48,44 +60,93 @@ const AdminDashboard: React.FC = () => {
   // CRUD operations
   const handleSaveService = async () => {
     setSaving(true);
-    if (editingItem) {
-      await supabase.from('services').update(formData).eq('id', editingItem.id);
-    } else {
-      await supabase.from('services').insert(formData);
+    try {
+      if (editingItem) {
+        await api.updateService(editingItem.id, formData);
+      } else {
+        await api.createService(formData);
+      }
+      setShowForm(false);
+      setEditingItem(null);
+      fetchAll();
+    } catch (error) {
+      console.error('Error saving service:', error);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setShowForm(false);
-    setEditingItem(null);
-    fetchAll();
   };
 
   const handleSavePortfolio = async () => {
     setSaving(true);
-    if (editingItem) {
-      await supabase.from('portfolio').update(formData).eq('id', editingItem.id);
-    } else {
-      await supabase.from('portfolio').insert(formData);
+    try {
+      if (editingItem) {
+        await api.updatePortfolioItem(editingItem.id, formData, selectedFile || undefined);
+      } else {
+        await api.createPortfolioItem(formData, selectedFile || undefined);
+      }
+      setShowForm(false);
+      setEditingItem(null);
+      setSelectedFile(null);
+      setImagePreview('');
+      fetchAll();
+    } catch (error) {
+      console.error('Error saving portfolio item:', error);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setShowForm(false);
-    setEditingItem(null);
-    fetchAll();
   };
 
-  const handleDelete = async (table: string, id: string) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDelete = async (type: string, id: string) => {
     if (!confirm('Are you sure you want to delete this item?')) return;
-    await supabase.from(table).delete().eq('id', id);
-    fetchAll();
+    try {
+      switch (type) {
+        case 'services':
+          await api.deleteService(id);
+          break;
+        case 'portfolio':
+          await api.deletePortfolioItem(id);
+          break;
+        case 'contacts':
+          await api.deleteContact(id);
+          break;
+        case 'bookings':
+          await api.deleteBooking(id);
+          break;
+      }
+      fetchAll();
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
-  const handleToggleRead = async (table: string, id: string, currentVal: boolean) => {
-    await supabase.from(table).update({ is_read: !currentVal }).eq('id', id);
-    fetchAll();
+  const handleToggleRead = async (id: string, currentVal: boolean) => {
+    try {
+      await api.toggleContactReadStatus(id);
+      fetchAll();
+    } catch (error) {
+      console.error('Error toggling read status:', error);
+    }
   };
 
   const handleUpdateBookingStatus = async (id: string, status: string) => {
-    await supabase.from('bookings').update({ status }).eq('id', id);
-    fetchAll();
+    try {
+      await api.updateBookingStatus(id, status);
+      fetchAll();
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+    }
   };
 
   const sidebarItems: { key: AdminTab; label: string; icon: React.FC<any> }[] = [
@@ -297,9 +358,31 @@ const AdminDashboard: React.FC = () => {
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-              <input value={formData.image_url || ''} onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project Image</label>
+              <div className="space-y-3">
+                <input type="file" accept="image/*" onChange={handleFileSelect}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                {(imagePreview || formData.image_url) && (
+                  <div className="relative">
+                    <img 
+                      src={imagePreview || formData.image_url} 
+                      alt="Preview" 
+                      className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setImagePreview('');
+                        setFormData({ ...formData, image_url: '' });
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="mb-4">
@@ -317,7 +400,7 @@ const AdminDashboard: React.FC = () => {
             <button onClick={handleSavePortfolio} disabled={saving} className="flex items-center gap-2 px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium hover:bg-blue-800 disabled:opacity-50">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />} Save
             </button>
-            <button onClick={() => { setShowForm(false); setEditingItem(null); }} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
+            <button onClick={() => { setShowForm(false); setEditingItem(null); setSelectedFile(null); setImagePreview(''); }} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
           </div>
         </div>
       )}
@@ -325,7 +408,7 @@ const AdminDashboard: React.FC = () => {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filterByEntity(portfolio).map(p => (
           <div key={p.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-            {p.image_url && <img src={p.image_url} alt={p.title} className="w-full h-40 object-cover" />}
+            {p.image_url && <img src={p.image_url.startsWith('http') ? p.image_url : `http://localhost:5000${p.image_url}`} alt={p.title} className="w-full h-40 object-cover" />}
             <div className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: ENTITIES[p.entity as EntityKey]?.colorLight, color: ENTITIES[p.entity as EntityKey]?.colorDark }}>
@@ -336,7 +419,7 @@ const AdminDashboard: React.FC = () => {
               <h4 className="font-bold text-gray-900 text-sm mb-1">{p.title}</h4>
               <p className="text-xs text-gray-500 line-clamp-2">{p.description}</p>
               <div className="flex gap-2 mt-3">
-                <button onClick={() => { setEditingItem(p); setFormData(p); setShowForm(true); }}
+                <button onClick={() => { setEditingItem(p); setFormData(p); setShowForm(true); setSelectedFile(null); setImagePreview(''); }}
                   className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600"><Edit className="w-4 h-4" /></button>
                 <button onClick={() => handleDelete('portfolio', p.id)}
                   className="p-1.5 rounded-lg hover:bg-red-50 text-red-600"><Trash2 className="w-4 h-4" /></button>

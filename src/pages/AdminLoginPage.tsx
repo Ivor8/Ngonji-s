@@ -3,7 +3,7 @@ import { Shield, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 const AdminLoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -22,28 +22,20 @@ const AdminLoginPage: React.FC = () => {
     setError('');
 
     try {
-      // Use Supabase auth to sign in
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Use new backend API to sign in
+      const response = await api.login(email, password);
 
-      if (error) {
-        setError(error.message || 'Invalid credentials');
-      } else if (data.user) {
-        // Check if user has admin role (optional - you can skip this if all users are admins)
-        const { data: profile } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profile?.role === 'admin' || !profile) {
-          loginAdmin(email);
-          navigate('/admin/dashboard');
-        } else {
-          setError('Access denied. Admin privileges required.');
-        }
+      if (response.error) {
+        setError(response.error || 'Invalid credentials');
+      } else if (response.success) {
+        // Store admin data in context
+        loginAdmin(email);
+        // Store token in localStorage
+        localStorage.setItem('adminToken', response.token);
+        localStorage.setItem('adminUser', JSON.stringify(response.admin));
+        navigate('/admin/dashboard');
+      } else {
+        setError('Invalid credentials');
       }
     } catch (err) {
       setError('Login failed. Please try again.');

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { EntityKey, ENTITIES } from '@/data/constants';
 import { Calendar, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -32,7 +32,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ entity, services }) => {
     if (!validate()) return;
     setStatus('loading');
     try {
-      const { error } = await supabase.from('bookings').insert({
+      await api.createBooking({
         entity,
         full_name: form.full_name,
         email: form.email,
@@ -42,11 +42,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ entity, services }) => {
         preferred_time: form.preferred_time || null,
         details: form.details,
       });
-      if (error) throw error;
       setStatus('success');
       setForm({ full_name: '', email: '', phone: '', service_id: '', preferred_date: '', preferred_time: '', details: '' });
       setTimeout(() => setStatus('idle'), 5000);
-    } catch {
+    } catch (error) {
+      console.error('Error submitting booking form:', error);
       setStatus('error');
       setTimeout(() => setStatus('idle'), 5000);
     }
