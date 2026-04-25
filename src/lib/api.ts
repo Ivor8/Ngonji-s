@@ -153,7 +153,7 @@ class ApiService {
       formData.append('image', imageFile);
     }
 
-    return this.request(`/portfolio/${id}`, {
+    return this.request(`/upload/portfolio/${id}`, {
       method: 'PUT',
       body: formData,
       headers: {}, // Let browser set Content-Type for FormData

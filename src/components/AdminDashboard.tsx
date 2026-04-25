@@ -419,9 +419,9 @@ const AdminDashboard: React.FC = () => {
               <h4 className="font-bold text-gray-900 text-sm mb-1">{p.title}</h4>
               <p className="text-xs text-gray-500 line-clamp-2">{p.description}</p>
               <div className="flex gap-2 mt-3">
-                <button onClick={() => { setEditingItem(p); setFormData(p); setShowForm(true); setSelectedFile(null); setImagePreview(''); }}
+                <button onClick={() => { setEditingItem({...p, id: p.id || p._id}); setFormData(p); setShowForm(true); setSelectedFile(null); setImagePreview(''); }}
                   className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600"><Edit className="w-4 h-4" /></button>
-                <button onClick={() => handleDelete('portfolio', p.id)}
+                <button onClick={() => handleDelete('portfolio', p.id || p._id)}
                   className="p-1.5 rounded-lg hover:bg-red-50 text-red-600"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>

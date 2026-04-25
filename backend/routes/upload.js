@@ -117,6 +117,76 @@ router.post('/portfolio', upload.single('image'), async (req, res) => {
   }
 });
 
+// Portfolio update route
+router.put('/portfolio/:id', upload.single('image'), async (req, res) => {
+  console.log('\n=== PORTFOLIO UPDATE DEBUG START ===');
+  console.log('Request headers:', req.headers);
+  console.log('Content-Type:', req.headers['content-type']);
+  console.log('Portfolio ID:', req.params.id);
+  
+  try {
+    // Debug multer processing
+    console.log('After multer middleware');
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    
+    // Find existing portfolio item
+    const portfolioItem = await Portfolio.findById(req.params.id);
+    if (!portfolioItem) {
+      console.log('❌ ERROR: Portfolio item not found');
+      return res.status(404).json({ error: 'Portfolio item not found' });
+    }
+
+    // Update portfolio data
+    const updateData = {
+      entity: req.body.entity,
+      title: req.body.title,
+      description: req.body.description,
+      client_name: req.body.client_name || '',
+      category: req.body.category || '',
+      is_featured: req.body.is_featured === 'true' || req.body.is_featured === true
+    };
+
+    // If new image was uploaded, update image_url
+    if (req.file) {
+      console.log('✅ New file uploaded:', req.file.filename);
+      updateData.image_url = `/uploads/${req.file.filename}`;
+    }
+
+    console.log('Update data:', updateData);
+
+    // Update the portfolio item
+    Object.assign(portfolioItem, updateData);
+    await portfolioItem.save();
+    
+    console.log('✅ Portfolio item updated successfully:', portfolioItem._id);
+    console.log('=== PORTFOLIO UPDATE DEBUG END ===\n');
+    res.json(portfolioItem);
+
+  } catch (error) {
+    console.error('❌ UPDATE ERROR:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      code: error.code
+    });
+    
+    console.log('=== PORTFOLIO UPDATE DEBUG END ===\n');
+    res.status(500).json({ 
+      error: 'Failed to update portfolio item', 
+      details: error.message,
+      stack: error.stack,
+      debug: {
+        body: req.body,
+        file: req.file,
+        headers: req.headers,
+        params: req.params
+      }
+    });
+  }
+});
+
 // Test route to verify upload endpoint is working
 router.get('/test', (req, res) => {
   res.json({ message: 'Upload endpoint is working!' });
