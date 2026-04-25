@@ -15,6 +15,7 @@ const testimonialRoutes = require('./routes/testimonials');
 const contactRoutes = require('./routes/contacts');
 const bookingRoutes = require('./routes/bookings');
 const authRoutes = require('./routes/auth');
+const uploadRoutes = require('./routes/upload');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,26 +31,47 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(compression());
 app.use(limiter);
-app.use(morgan('combined'));
+app.use(morgan('dev')); // Use dev format for cleaner logs
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:8080',
   credentials: true
 }));
-// Custom middleware to handle JSON and FormData
+// Handle JSON and form data, but completely skip for FormData
 app.use((req, res, next) => {
-  if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
-    // Let multer handle FormData
-    next();
-  } else {
-    // Use JSON parser for regular JSON requests
-    express.json({ limit: '10mb' })(req, res, next);
+  const contentType = req.headers['content-type'] || '';
+  
+  console.log(`\n🔍 MIDDLEWARE DEBUG: ${req.method} ${req.originalUrl}`);
+  console.log('Content-Type:', contentType);
+  console.log('Content-Length:', req.headers['content-length']);
+  
+  if (contentType.includes('multipart/form-data')) {
+    console.log('✅ Detected FormData - SKIPPING JSON parser');
+    // Skip ALL body parsing for FormData - let multer handle it
+    return next();
   }
+  
+  console.log('📝 Regular request - applying JSON parser');
+  // Only parse JSON and form data for non-FormData requests
+  express.json({ limit: '10mb' })(req, res, (err) => {
+    if (err) {
+      console.error('❌ JSON parser error:', err);
+      return next(err);
+    }
+    console.log('✅ JSON parser successful');
+    express.urlencoded({ extended: true, limit: '10mb' })(req, res, next);
+  });
 });
 
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Upload route BEFORE middleware to avoid JSON parsing conflicts
+app.use('/api/upload', uploadRoutes);
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploaded files with CORS
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:8080');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);

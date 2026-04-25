@@ -45,29 +45,8 @@ exports.getPortfolioItem = async (req, res) => {
 // @access  Public (in production, add authentication)
 exports.createPortfolioItem = async (req, res) => {
   try {
-    // Manual validation for FormData
-    const { entity, title, description, client_name, category, is_featured } = req.body;
-    
-    // Validate required fields
-    if (!entity || !['law', 'realestate', 'foundation', 'credit'].includes(entity)) {
-      return res.status(400).json({ error: 'Invalid entity type' });
-    }
-    
-    if (!title || title.trim().length === 0 || title.trim().length > 200) {
-      return res.status(400).json({ error: 'Title must be between 1 and 200 characters' });
-    }
-    
-    if (!description || description.trim().length === 0) {
-      return res.status(400).json({ error: 'Description is required' });
-    }
-    
-    if (client_name && client_name.trim().length > 100) {
-      return res.status(400).json({ error: 'Client name must be less than 100 characters' });
-    }
-    
-    if (category && category.trim().length > 100) {
-      return res.status(400).json({ error: 'Category must be less than 100 characters' });
-    }
+    console.log('Request body:', req.body);
+    console.log('Uploaded file:', req.file);
 
     // If image was uploaded, add the URL to the request body
     if (req.file) {
@@ -75,17 +54,18 @@ exports.createPortfolioItem = async (req, res) => {
     }
 
     // Convert is_featured to boolean if it's a string
-    if (is_featured !== undefined) {
-      req.body.is_featured = is_featured === 'true' || is_featured === true;
+    if (req.body.is_featured !== undefined) {
+      req.body.is_featured = req.body.is_featured === 'true' || req.body.is_featured === true;
     }
 
     const portfolioItem = new Portfolio(req.body);
     await portfolioItem.save();
 
+    console.log('Portfolio item created:', portfolioItem);
     res.status(201).json(portfolioItem);
   } catch (error) {
     console.error('Error creating portfolio item:', error);
-    res.status(500).json({ error: 'Failed to create portfolio item' });
+    res.status(500).json({ error: 'Failed to create portfolio item', details: error.message });
   }
 };
 
@@ -94,29 +74,8 @@ exports.createPortfolioItem = async (req, res) => {
 // @access  Public (in production, add authentication)
 exports.updatePortfolioItem = async (req, res) => {
   try {
-    // Manual validation for FormData
-    const { entity, title, description, client_name, category, is_featured } = req.body;
-    
-    // Validate fields if they exist
-    if (entity && !['law', 'realestate', 'foundation', 'credit'].includes(entity)) {
-      return res.status(400).json({ error: 'Invalid entity type' });
-    }
-    
-    if (title && (title.trim().length === 0 || title.trim().length > 200)) {
-      return res.status(400).json({ error: 'Title must be between 1 and 200 characters' });
-    }
-    
-    if (description && description.trim().length === 0) {
-      return res.status(400).json({ error: 'Description cannot be empty' });
-    }
-    
-    if (client_name && client_name.trim().length > 100) {
-      return res.status(400).json({ error: 'Client name must be less than 100 characters' });
-    }
-    
-    if (category && category.trim().length > 100) {
-      return res.status(400).json({ error: 'Category must be less than 100 characters' });
-    }
+    console.log('Update request body:', req.body);
+    console.log('Update uploaded file:', req.file);
 
     // If image was uploaded, add the URL to the request body
     if (req.file) {
@@ -124,8 +83,8 @@ exports.updatePortfolioItem = async (req, res) => {
     }
 
     // Convert is_featured to boolean if it's a string
-    if (is_featured !== undefined) {
-      req.body.is_featured = is_featured === 'true' || is_featured === true;
+    if (req.body.is_featured !== undefined) {
+      req.body.is_featured = req.body.is_featured === 'true' || req.body.is_featured === true;
     }
 
     const portfolioItem = await Portfolio.findByIdAndUpdate(
@@ -138,10 +97,11 @@ exports.updatePortfolioItem = async (req, res) => {
       return res.status(404).json({ error: 'Portfolio item not found' });
     }
 
+    console.log('Portfolio item updated:', portfolioItem);
     res.json(portfolioItem);
   } catch (error) {
     console.error('Error updating portfolio item:', error);
-    res.status(500).json({ error: 'Failed to update portfolio item' });
+    res.status(500).json({ error: 'Failed to update portfolio item', details: error.message });
   }
 };
 

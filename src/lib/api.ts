@@ -4,11 +4,18 @@ class ApiService {
   private async request(endpoint: string, options: RequestInit = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     
-    const defaultHeaders = {
-      'Content-Type': 'application/json',
-    };
+    console.log(`\n🌐 HTTP REQUEST DEBUG: ${options.method || 'GET'} ${url}`);
+    console.log('Request headers:', options.headers);
+    console.log('Request body type:', options.body?.constructor?.name);
+    console.log('Request body size:', options.body ? (options.body as any).size || 'unknown' : 'none');
+    
+    // Don't set Content-Type for FormData - let browser set it automatically
+    const defaultHeaders = options.body instanceof FormData 
+      ? {} 
+      : { 'Content-Type': 'application/json' };
 
     try {
+      console.log('🚀 Sending fetch request...');
       const response = await fetch(url, {
         ...options,
         headers: {
@@ -17,14 +24,32 @@ class ApiService {
         },
       });
 
+      console.log('📡 Response received:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        console.log('❌ Response not OK, parsing error...');
+        const errorData = await response.json().catch((e) => {
+          console.log('Failed to parse error JSON:', e);
+          return {};
+        });
+        console.log('Error data:', errorData);
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const responseData = await response.json();
+      console.log('✅ Response parsed successfully:', responseData);
+      return responseData;
     } catch (error) {
-      console.error('API request failed:', error);
+      console.error('❌ API request failed:', error);
+      console.error('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
       throw error;
     }
   }
@@ -70,19 +95,45 @@ class ApiService {
   }
 
   async createPortfolioItem(data: any, imageFile?: File) {
+    console.log('\n=== FRONTEND UPLOAD DEBUG START ===');
+    console.log('Creating portfolio item...');
+    console.log('Data:', data);
+    console.log('Image file:', imageFile);
+    
     const formData = new FormData();
     
     Object.keys(data).forEach(key => {
       if (data[key] !== null && data[key] !== undefined) {
+        console.log(`📝 Adding field ${key}:`, data[key]);
         formData.append(key, data[key]);
       }
     });
     
     if (imageFile) {
+      console.log('📸 Adding image file:', {
+        name: imageFile.name,
+        size: imageFile.size,
+        type: imageFile.type
+      });
       formData.append('image', imageFile);
+    } else {
+      console.log('⚠️ No image file provided');
     }
 
-    return this.request('/portfolio', {
+    // Debug FormData contents
+    console.log('🔍 FormData entries:');
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`  ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+      } else {
+        console.log(`  ${key}: ${value}`);
+      }
+    }
+
+    console.log('🚀 Sending request to /upload/portfolio');
+    console.log('=== FRONTEND UPLOAD DEBUG END ===\n');
+
+    return this.request('/upload/portfolio', {
       method: 'POST',
       body: formData,
       headers: {}, // Let browser set Content-Type for FormData
